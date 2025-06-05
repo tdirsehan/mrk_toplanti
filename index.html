@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pazarlama (İngilizce) Anabilim Dalı Toplantısı Planlayıcısı</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: 30px;
+        }
+
+        .person-selector {
+            margin-bottom: 30px;
+        }
+
+        .person-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .person-tab {
+            padding: 12px 20px;
+            background: #f3f4f6;
+            border: 2px solid transparent;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            text-align: center;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .person-tab:hover {
+            background: #e5e7eb;
+            transform: translateY(-2px);
+        }
+
+        .person-tab.active {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            border-color: #4f46e5;
+        }
+
+        .availability-grid {
+            background: #f8fafc;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .grid-header {
+            display: grid;
+            grid-template-columns: 150px repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .day-header {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            color: white;
+            padding: 15px 10px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .time-label {
+            background: #374151;
+            color: white;
+            padding: 15px 10px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .grid-row {
+            display: grid;
+            grid-template-columns: 150px repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .time-slot {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 15px 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 60px;
+        }
+
+        .time-slot:hover {
+            border-color: #4f46e5;
+            transform: scale(1.02);
+        }
+
+        .time-slot.available {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border-color: #10b981;
+        }
+
+        .time-slot.available:before {
+            content: "✓";
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .common-times {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        .common-times h3 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .participants-info {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .participants-info h4 {
+            margin: 0;
+            font-size: 1.1em;
+        }
+
+        .common-time-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+
+        .common-time {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+        }
+
+        .instructions {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .instructions h3 {
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                border-radius: 0;
+                margin: -20px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
+            .grid-header, .grid-row {
+                grid-template-columns: 120px repeat(4, 1fr);
+                gap: 5px;
+            }
+
+            .person-tab {
+                min-width: 150px;
+                padding: 10px 15px;
+                font-size: 0.9em;
+            }
+
+            .day-header, .time-label {
+                padding: 10px 5px;
+                font-size: 0.9em;
+            }
+
+            .time-slot {
+                padding: 10px 5px;
+                min-height: 50px;
+                font-size: 0.9em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .grid-header, .grid-row {
+                grid-template-columns: 100px repeat(4, 1fr);
+                gap: 3px;
+            }
+
+            .day-header, .time-label {
+                padding: 8px 3px;
+                font-size: 0.8em;
+            }
+
+            .time-slot {
+                padding: 8px 3px;
+                min-height: 45px;
+                font-size: 0.8em;
+            }
+
+            .person-tabs {
+                flex-direction: column;
+            }
+
+            .person-tab {
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 Pazarlama (İngilizce) Anabilim Dalı Toplantısı Planlayıcısı</h1>
+            <p>Ortak müsait zamanları kolayca bulun ve toplantınızı planlayın</p>
+        </div>
+
+        <div class="main-content">
+            <div class="instructions">
+                <h3>📋 Nasıl Kullanılır?</h3>
+                <p>1. Aşağıdan adınızı seçin<br>
+                2. Müsait olduğunuz zaman dilimlerine tıklayın (yeşil olacak)<br>
+                3. Tüm katılımcılar seçimlerini yaptıktan sonra ortak müsait zamanları görebilirsiniz</p>
+            </div>
+
+            <div class="person-selector">
+                <div class="person-tabs" id="personTabs">
+                    <div class="person-tab active" data-person="0">Prof.Dr. Emine Çobanoğlu</div>
+                    <div class="person-tab" data-person="1">Prof. Dr. İrem Erdoğmuş</div>
+                    <div class="person-tab" data-person="2">Prof. Dr. Taşkın Dirsehan</div>
+                    <div class="person-tab" data-person="3">Ar.Gör. Melisa Karakaya Arslan</div>
+                    <div class="person-tab" data-person="4">Ar.Gör. Nazlı Dikmen Özcan</div>
+                </div>
+            </div>
+
+            <div class="availability-grid">
+                <div class="grid-header">
+                    <div class="time-label">Saat Dilimi</div>
+                    <div class="day-header">Salı<br>10 Haziran</div>
+                    <div class="day-header">Çarşamba<br>11 Haziran</div>
+                    <div class="day-header">Perşembe<br>12 Haziran</div>
+                    <div class="day-header">Cuma<br>13 Haziran</div>
+                </div>
+
+                <div class="grid-row">
+                    <div class="time-label">Sabah<br>10:30-12:30</div>
+                    <div class="time-slot" data-day="0" data-time="0"></div>
+                    <div class="time-slot" data-day="1" data-time="0"></div>
+                    <div class="time-slot" data-day="2" data-time="0"></div>
+                    <div class="time-slot" data-day="3" data-time="0"></div>
+                </div>
+
+                <div class="grid-row">
+                    <div class="time-label">Öğleden Sonra<br>13:30-15:30</div>
+                    <div class="time-slot" data-day="0" data-time="1"></div>
+                    <div class="time-slot" data-day="1" data-time="1"></div>
+                    <div class="time-slot" data-day="2" data-time="1"></div>
+                    <div class="time-slot" data-day="3" data-time="1"></div>
+                </div>
+
+                <div class="grid-row">
+                    <div class="time-label">Akşam<br>19:00-21:00</div>
+                    <div class="time-slot" data-day="0" data-time="2"></div>
+                    <div class="time-slot" data-day="1" data-time="2"></div>
+                    <div class="time-slot" data-day="2" data-time="2"></div>
+                    <div class="time-slot" data-day="3" data-time="2"></div>
+                </div>
+            </div>
+
+            <div class="common-times">
+                <h3>🎯 Ortak Müsait Zamanlar</h3>
+                <div class="participants-info" id="participantsInfo">
+                    <div class="participants-section">
+                        <h4>👥 Giriş Yapanlar: <span id="participantsList">Henüz kimse giriş yapmadı</span></h4>
+                    </div>
+                </div>
+                <div class="common-time-list" id="commonTimes">
+                    <div class="common-time">Henüz giriş yapan olmadığı için ortak müsait zaman gösterilemiyor</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const people = [
+            'Prof.Dr. Emine Çobanoğlu',
+            'Prof. Dr. İrem Erdoğmuş', 
+            'Prof. Dr. Taşkın Dirsehan',
+            'Ar.Gör. Melisa Karakaya Arslan',
+            'Ar.Gör. Nazlı Dikmen Özcan'
+        ];
+
+        const days = ['Salı (10 Haziran)', 'Çarşamba (11 Haziran)', 'Perşembe (12 Haziran)', 'Cuma (13 Haziran)'];
+        const times = ['Sabah (10:30-12:30)', 'Öğleden Sonra (13:30-15:30)', 'Akşam (19:00-21:00)'];
+
+        let currentPerson = 0;
+        let availability = {};
+        let hasParticipated = {}; // Track who has participated
+
+        // Initialize availability data
+        for (let person = 0; person < 5; person++) {
+            availability[person] = {};
+            hasParticipated[person] = false;
+            for (let day = 0; day < 4; day++) {
+                availability[person][day] = {};
+                for (let time = 0; time < 3; time++) {
+                    availability[person][day][time] = false;
+                }
+            }
+        }
+
+        // Person tab switching
+        document.querySelectorAll('.person-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.person-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                currentPerson = parseInt(this.dataset.person);
+                updateGrid();
+            });
+        });
+
+        // Time slot clicking
+        document.querySelectorAll('.time-slot').forEach(slot => {
+            slot.addEventListener('click', function() {
+                const day = parseInt(this.dataset.day);
+                const time = parseInt(this.dataset.time);
+                
+                availability[currentPerson][day][time] = !availability[currentPerson][day][time];
+                hasParticipated[currentPerson] = true; // Mark as participated
+                updateGrid();
+                updateParticipants();
+                updateCommonTimes();
+            });
+        });
+
+        function updateGrid() {
+            document.querySelectorAll('.time-slot').forEach(slot => {
+                const day = parseInt(slot.dataset.day);
+                const time = parseInt(slot.dataset.time);
+                
+                if (availability[currentPerson][day][time]) {
+                    slot.classList.add('available');
+                } else {
+                    slot.classList.remove('available');
+                }
+            });
+        }
+
+        function updateParticipants() {
+            const participants = [];
+            for (let person = 0; person < 5; person++) {
+                if (hasParticipated[person]) {
+                    participants.push(people[person]);
+                }
+            }
+            
+            const participantsList = document.getElementById('participantsList');
+            if (participants.length === 0) {
+                participantsList.textContent = 'Henüz kimse giriş yapmadı';
+            } else {
+                participantsList.textContent = participants.join(', ');
+            }
+        }
+
+        function updateCommonTimes() {
+            const participants = [];
+            for (let person = 0; person < 5; person++) {
+                if (hasParticipated[person]) {
+                    participants.push(person);
+                }
+            }
+            
+            if (participants.length === 0) {
+                document.getElementById('commonTimes').innerHTML = 
+                    '<div class="common-time">Henüz giriş yapan olmadığı için ortak müsait zaman gösterilemiyor</div>';
+                return;
+            }
+            
+            const commonTimes = [];
+            
+            for (let day = 0; day < 4; day++) {
+                for (let time = 0; time < 3; time++) {
+                    let allAvailable = true;
+                    for (let person of participants) {
+                        if (!availability[person][day][time]) {
+                            allAvailable = false;
+                            break;
+                        }
+                    }
+                    
+                    if (allAvailable && participants.length > 0) {
+                        commonTimes.push({
+                            day: days[day],
+                            time: times[time],
+                            dayIndex: day,
+                            timeIndex: time
+                        });
+                    }
+                }
+            }
+
+            const commonTimesContainer = document.getElementById('commonTimes');
+            
+            if (commonTimes.length === 0) {
+                commonTimesContainer.innerHTML = 
+                    '<div class="common-time">Giriş yapanların ortak müsait zamanı bulunmuyor</div>';
+            } else {
+                commonTimesContainer.innerHTML = commonTimes.map(ct => 
+                    `<div class="common-time">
+                        <strong>${ct.day}</strong><br>
+                        ${ct.time}
+                     </div>`
+                ).join('');
+            }
+        }
+
+        // Initialize the app
+        updateGrid();
+        updateParticipants();
+        updateCommonTimes();
+    </script>
+</body>
+</html>
